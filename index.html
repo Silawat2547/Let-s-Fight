@@ -70,6 +70,7 @@
       font-size: 20px;
       color: #b3005e;
       font-weight: bold;
+      text-align: center;
     }
 
     .battle-animation {
@@ -87,24 +88,48 @@
     .show {
       opacity: 1;
     }
+
+    .end-scene {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+    }
+
+    .end-scene img {
+      width: 120px;
+      height: auto;
+      margin-bottom: 15px;
+    }
+
+    .retry-button {
+      margin-top: 10px;
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <h1>ศึกรักเป่ายิ้งฉุบ! 💘</h1>
+  <h1>LET'S TEST YOUR LOVE! 💘</h1>
   <div class="arena">
     <div class="character" id="charA">
-      <img src="https://i.imgur.com/Uu2xjKw.png" alt="Player A">
+      <img src="https://i.imgur.com/Uu2xjKw.png" alt="Player A" id="imgA">
       <div class="hearts" id="heartsA"></div>
-      <p>คุณ (ผู้เล่น A)</p>
+      <p>BAMU</p>
     </div>
     <div class="character" id="charB">
       <img src="https://i.imgur.com/ogvH4Ys.png" alt="Player B">
       <div class="hearts" id="heartsB"></div>
-      <p>ตัวละคร B (BOT)</p>
+      <p>NUEA</p>
     </div>
   </div>
 
-  <div class="choices">
+  <div class="choices" id="choiceButtons">
     <button class="choice-button" onclick="play('rock')">✊ ค้อน</button>
     <button class="choice-button" onclick="play('scissors')">✌️ กรรไกร</button>
     <button class="choice-button" onclick="play('paper')">✋ กระดาษ</button>
@@ -113,6 +138,12 @@
   <div class="battle-animation" id="battleAnimation"></div>
   <div class="result" id="result"></div>
 
+  <div class="end-scene" id="endScene">
+    <img src="https://i.imgur.com/some-crying-image.png" alt="A crying" id="cryingImage">
+    <div class="result">เสียใจด้วยนะ ดูเหมือน NUEA จะรักคุณมากกว่า TT</div>
+    <button class="retry-button" onclick="restartGame()">TRY AGAIN</button>
+  </div>
+
   <script>
     let livesA = 3;
     let livesB = 3;
@@ -120,6 +151,9 @@
     const heartsB = document.getElementById("heartsB");
     const resultText = document.getElementById("result");
     const battleAnimation = document.getElementById("battleAnimation");
+    const choiceButtons = document.getElementById("choiceButtons");
+    const endScene = document.getElementById("endScene");
+    const imgA = document.getElementById("imgA");
 
     const options = ["rock", "paper", "scissors"];
 
@@ -151,18 +185,18 @@
 
         if (winner === "A") {
           livesB--;
-          resultText.textContent = `ยินดีด้วย! อีกนิดเดียวเท่านั้น (${playerChoice} vs ${botChoice})`;
+          resultText.textContent = `Hmmm เธอแค่ดวงดีแหยะ (${playerChoice} vs ${botChoice})`;
         } else if (winner === "B") {
           livesA--;
-          resultText.textContent = `เสียใจด้วย คุณแพ้ ลองใหม่นะ (${playerChoice} vs ${botChoice})`;
+          resultText.textContent = `แง่ง แง่ง แง่ง แกว้กๆ กรู๊ (${playerChoice} vs ${botChoice})`;
         } else {
-          resultText.textContent = `เสมอ! (${playerChoice} vs ${botChoice})`;
+          resultText.textContent = `DRAW! (${playerChoice} vs ${botChoice})`;
         }
 
         renderHearts();
 
         if (livesA === 0) {
-          resultText.textContent = "คุณแพ้หมดใจแล้ว... ฝ่าย B รักมากกว่านะ 💞";
+          endGame();
         }
       }, 1000);
     }
@@ -191,6 +225,25 @@
       } else {
         return "B";
       }
+    }
+
+    function endGame() {
+      resultText.textContent = "คุณแพ้หมดใจแล้ว... ฝ่าย B รักมากกว่านะ 💞";
+      choiceButtons.style.display = "none";
+      document.getElementById("cryingImage").src = "https://i.imgur.com/YOUR_IMAGE_HERE.png"; // ใส่ลิงก์ภาพร้องไห้
+      endScene.style.display = "flex";
+      imgA.src = "https://i.imgur.com/YOUR_IMAGE_HERE.png"; // เปลี่ยนภาพ A เป็นร้องไห้ด้วย
+    }
+
+    function restartGame() {
+      livesA = 3;
+      livesB = 3;
+      renderHearts();
+      resultText.textContent = "";
+      battleAnimation.innerHTML = "";
+      choiceButtons.style.display = "block";
+      endScene.style.display = "none";
+      imgA.src = "https://i.imgur.com/Uu2xjKw.png";
     }
 
     renderHearts();
