@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Love RPS Battle</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to right, #ffe0f0, #ffd6ec);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      color: #d63384;
+      margin-bottom: 20px;
+    }
+
+    .arena {
+      display: flex;
+      justify-content: space-between;
+      width: 90%;
+      max-width: 800px;
+      align-items: center;
+      position: relative;
+    }
+
+    .character {
+      text-align: center;
+      width: 150px;
+    }
+
+    .character img {
+      width: 100px;
+      height: 100px;
+    }
+
+    .hearts {
+      margin-top: 10px;
+    }
+
+    .heart {
+      display: inline-block;
+      color: #ff4d88;
+      font-size: 24px;
+    }
+
+    .choices {
+      margin-top: 30px;
+    }
+
+    .choice-button {
+      margin: 0 10px;
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #b3005e;
+      font-weight: bold;
+    }
+
+    .battle-animation {
+      margin-top: 20px;
+      font-size: 40px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>ศึกรักเป่ายิ้งฉุบ! 💘</h1>
+  <div class="arena">
+    <div class="character" id="charA">
+      <img src="https://i.imgur.com/Uu2xjKw.png" alt="Player A">
+      <div class="hearts" id="heartsA"></div>
+      <p>คุณ (ผู้เล่น A)</p>
+    </div>
+    <div class="character" id="charB">
+      <img src="https://i.imgur.com/ogvH4Ys.png" alt="Player B">
+      <div class="hearts" id="heartsB"></div>
+      <p>ตัวละคร B (BOT)</p>
+    </div>
+  </div>
+
+  <div class="choices">
+    <button class="choice-button" onclick="play('rock')">✊ ค้อน</button>
+    <button class="choice-button" onclick="play('scissors')">✌️ กรรไกร</button>
+    <button class="choice-button" onclick="play('paper')">✋ กระดาษ</button>
+  </div>
+
+  <div class="battle-animation" id="battleAnimation"></div>
+  <div class="result" id="result"></div>
+
+  <script>
+    let livesA = 3;
+    let livesB = 3;
+    const heartsA = document.getElementById("heartsA");
+    const heartsB = document.getElementById("heartsB");
+    const resultText = document.getElementById("result");
+    const battleAnimation = document.getElementById("battleAnimation");
+
+    const options = ["rock", "paper", "scissors"];
+
+    function renderHearts() {
+      heartsA.innerHTML = "❤️".repeat(livesA);
+      heartsB.innerHTML = "❤️".repeat(livesB);
+    }
+
+    function play(playerChoice) {
+      if (livesA <= 0 || livesB <= 0) return;
+
+      let botChoice;
+
+      if (livesB === 1) {
+        // ให้ B ชนะแน่ ถ้าเหลือหัวใจดวงสุดท้าย
+        switch (playerChoice) {
+          case "rock": botChoice = "paper"; break;
+          case "paper": botChoice = "scissors"; break;
+          case "scissors": botChoice = "rock"; break;
+        }
+      } else {
+        botChoice = options[Math.floor(Math.random() * 3)];
+      }
+
+      showAnimation(playerChoice, botChoice);
+
+      setTimeout(() => {
+        const winner = getWinner(playerChoice, botChoice);
+
+        if (winner === "A") {
+          livesB--;
+          resultText.textContent = `ยินดีด้วย! อีกนิดเดียวเท่านั้น (${playerChoice} vs ${botChoice})`;
+        } else if (winner === "B") {
+          livesA--;
+          resultText.textContent = `เสียใจด้วย คุณแพ้ ลองใหม่นะ (${playerChoice} vs ${botChoice})`;
+        } else {
+          resultText.textContent = `เสมอ! (${playerChoice} vs ${botChoice})`;
+        }
+
+        renderHearts();
+
+        if (livesA === 0) {
+          resultText.textContent = "คุณแพ้หมดใจแล้ว... ฝ่าย B รักมากกว่านะ 💞";
+        }
+      }, 1000);
+    }
+
+    function showAnimation(a, b) {
+      const icons = {
+        rock: "✊",
+        paper: "✋",
+        scissors: "✌️"
+      };
+      battleAnimation.innerHTML = `<span>${icons[a]}</span> VS <span>${icons[b]}</span>`;
+      battleAnimation.classList.add("show");
+      setTimeout(() => {
+        battleAnimation.classList.remove("show");
+      }, 900);
+    }
+
+    function getWinner(a, b) {
+      if (a === b) return "draw";
+      if (
+        (a === "rock" && b === "scissors") ||
+        (a === "paper" && b === "rock") ||
+        (a === "scissors" && b === "paper")
+      ) {
+        return "A";
+      } else {
+        return "B";
+      }
+    }
+
+    renderHearts();
+  </script>
+</body>
+</html>
